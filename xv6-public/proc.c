@@ -91,7 +91,7 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   //default priority
-  p->priority = 16;
+  p->priority = 32;
 
   release(&ptable.lock);
 
@@ -345,8 +345,10 @@ void scheduler(void)
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
+
     struct proc *highPriority;
     highPriority = ptable.proc;
+
     //p = find_proc_with_lowest_prior_value(ptable); //from slides
     for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
     { //we find RUNNABLE proc with highest priority instead of the process that wants to execute.
@@ -387,6 +389,22 @@ void scheduler(void)
 
     release(&ptable.lock);
   }
+}
+
+int setpriority(int priority)
+{
+  struct proc *p = myproc();
+
+  if (priority < 0 || priority > 31)
+  {
+    return -1;
+  }
+  else
+  {
+    p->priority = priority;
+  }
+
+  return 0;
 }
 
 // Enter scheduler.  Must hold only ptable.lock

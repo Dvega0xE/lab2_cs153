@@ -84,8 +84,12 @@ int sys_uptime(void)
   return xticks;
 }
 
-int sys_PScheduler(void)
+int sys_setpriority(void)
 {
-  PScheduler();
-  return 0;
+  int priority;
+
+  if (argint(0, &priority) < 0)
+    return -1;
+
+  return setpriority(priority);
 }
