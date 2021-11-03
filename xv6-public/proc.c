@@ -359,14 +359,25 @@ void scheduler(void)
         continue;
       }
 
+      if (p->priority <= highPriority->priority)
+      {
+        highPriority = p;
+      }
+      else if (p->priority > 1)
+      {
+        p->priority--;
+      }
+
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
-      c->proc = p;
-      switchuvm(p);
-      p->state = RUNNING;
+      c->proc = highPriority;
+      switchuvm(highPriority);
+      highPriority->state = RUNNING;
 
-      swtch(&(c->scheduler), p->context);
+      highPriority->priority++;
+
+      swtch(&(c->scheduler), highPriority->context);
       switchkvm();
 
       // Process is done running for now.
