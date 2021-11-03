@@ -1,0 +1,1 @@
+make clean && make qemu-nox     // To Run xv6
